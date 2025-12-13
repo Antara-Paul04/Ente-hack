@@ -1,3 +1,6 @@
+/* Google Fonts Import */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap');
+
 /* Font faces */
 @font-face {
   font-family: 'Gilroy';
@@ -91,7 +94,7 @@ body {
 }
 
 .ente-link {
-  font-family: 'Gilroy', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   font-weight: 700;
   color: #10B981;
   text-decoration: none;
