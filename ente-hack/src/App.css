@@ -76,6 +76,19 @@ body {
   width: 2vw;
 }
 
+.ente-link {
+  font-family: 'Gilroy', sans-serif;
+  font-weight: 700;
+  color: #10B981;
+  text-decoration: none;
+  transition: all 0.3s;
+  cursor: pointer;
+}
+
+.ente-link:hover {
+  color: #059669;
+  text-decoration: underline;
+}
 
 @media (max-width: 968px) {
   .content-grid {
@@ -129,49 +142,50 @@ body {
   background: #F0FDF4;
 }
 
-/* Options Grid */
-.options-grid-container {
+/* Option Cards Container */
+.options-card-container {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 16px;
-
-  height: 320px; 
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+  max-height: 400px;
   overflow-y: auto;
-  overflow-x: hidden;
-
-  padding-right: 4px;
+  padding: 4px;
 }
 
-
-.option-box {
-  aspect-ratio: 1;
+/* Option Card */
+.option-card {
   background: #fff;
   border: 2px solid #E0E0E0;
-  border-radius: 16px;
+  border-radius: 20px;
+  padding: 24px;
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 24px;
-  font-weight: 600;
-  color: #999;
   transition: all 0.3s;
-  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  text-align: center;
 }
 
-.option-box:hover {
-  transform: scale(1.05);
+.option-card:hover {
+  transform: translateY(-4px);
   border-color: #10B981;
 }
 
-.option-box.selected {
-  border: 3px solid #10B981;
-  box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
+.option-card.selected {
+  border: 2px solid #10B981;
+  background: #F0FDF4;
+  box-shadow: 0 8px 24px rgba(16, 185, 129, 0.3);
 }
 
-.option-box .none-text {
-  font-size: 32px;
-  color: #CCC;
+.option-card-image {
+  width: 100%;
+  height: 200px;
+  object-fit: contain;
+}
+
+.option-card.selected {
+  color: #10B981;
 }
 
 /* Preview Panel */
@@ -194,243 +208,10 @@ body {
   height: 80%;
 }
 
-
 /* Avatar Container */
 .avatar-container {
   position: relative;
   overflow: hidden;
-}
-
-/* Avatar Parts */
-.avatar-clothes {
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-}
-
-.avatar-face {
-  position: absolute;
-  top: 30%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  box-shadow: inset 0 -10px 20px rgba(0,0,0,0.05);
-}
-
-.avatar-hair {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-}
-
-.ponytail {
-  position: absolute;
-  right: -10%;
-  top: 50%;
-  border-radius: 50%;
-  transform: rotate(25deg);
-}
-
-.avatar-eyes {
-  position: absolute;
-  top: 35%;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.eye-dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-}
-
-.eye-circle {
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-}
-
-.eye-star {
-  font-size: 20px;
-}
-
-.eye-heart {
-  font-size: 18px;
-}
-
-.eye-square {
-  width: 14px;
-  height: 14px;
-  border-radius: 2px;
-}
-
-.eye-triangle {
-  width: 0;
-  height: 0;
-  border-left: 8px solid transparent;
-  border-right: 8px solid transparent;
-}
-
-.eye-line {
-  width: 18px;
-  height: 3px;
-  border-radius: 2px;
-}
-
-.eye-crescent {
-  font-size: 20px;
-}
-
-.eye-cross {
-  font-size: 22px;
-  font-weight: bold;
-}
-
-.eye-sparkle {
-  font-size: 18px;
-}
-
-.avatar-mouth {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translateX(-50%);
-}
-
-.mouth-smile {
-  width: 40px;
-  height: 20px;
-  border: 3px solid;
-  border-top: none;
-  border-radius: 0 0 100px 100px;
-}
-
-.mouth-grin {
-  width: 50px;
-  height: 15px;
-  border-radius: 0 0 25px 25px;
-}
-
-.mouth-line {
-  width: 30px;
-  height: 3px;
-  border-radius: 2px;
-}
-
-.mouth-wave {
-  font-size: 24px;
-}
-
-.mouth-circle {
-  width: 20px;
-  height: 20px;
-  border: 3px solid;
-  border-radius: 50%;
-}
-
-.mouth-triangle {
-  width: 0;
-  height: 0;
-  border-left: 15px solid transparent;
-  border-right: 15px solid transparent;
-}
-
-.mouth-heart {
-  font-size: 20px;
-}
-
-.mouth-zigzag {
-  font-size: 20px;
-}
-
-.mouth-dots-container {
-  display: flex;
-  gap: 4px;
-}
-
-.mouth-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-}
-
-/* Accessories */
-.accessory-glasses,
-.accessory-sunglasses {
-  position: absolute;
-  top: 33%;
-  left: 50%;
-  transform: translateX(-50%);
-  height: 25px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.glass-lens,
-.sunglass-lens {
-  width: 45px;
-  height: 25px;
-}
-
-.glass-lens {
-  border-radius: 50%;
-}
-
-.sunglass-lens {
-  border-radius: 8px;
-}
-
-.glass-bridge,
-.sunglass-bridge {
-  width: 15px;
-  height: 3px;
-}
-
-.accessory-hat {
-  position: absolute;
-  top: 5%;
-  left: 50%;
-  transform: translateX(-50%);
-}
-
-.hat-top {
-  height: 30px;
-  border-radius: 50% 50% 0 0;
-}
-
-.hat-brim {
-  height: 10px;
-  margin-top: -5px;
-  margin-left: -10px;
-  border-radius: 20px;
-}
-
-.accessory-crown {
-  position: absolute;
-  top: 8%;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 40px;
-}
-
-.accessory-bow {
-  position: absolute;
-  top: 15%;
-  right: 20%;
-  font-size: 30px;
-}
-
-.accessory-headband {
-  position: absolute;
-  top: 20%;
-  left: 50%;
-  transform: translateX(-50%);
-  height: 12px;
-  border-radius: 20px 20px 0 0;
 }
 
 /* Responsive adjustments */
@@ -447,17 +228,21 @@ body {
   .preview-panel {
     padding: 20px;
   }
+  
   .preview-panel {
-  width: fit-content;
-  height: fit-content;   /* 👈 hug contents */
-  flex: 0 0 auto;       /* 👈 don't grow */
-  background: #E5E5E5;
-  border-radius: 24px;
-  padding: 40px;
-}
-
+    width: fit-content;
+    height: fit-content;
+    flex: 0 0 auto;
+    background: #E5E5E5;
+    border-radius: 24px;
+    padding: 40px;
+  }
 
   .category-icons {
     grid-template-columns: repeat(3, 1fr);
+  }
+
+  .options-card-container {
+    grid-template-columns: 1fr;
   }
 }
