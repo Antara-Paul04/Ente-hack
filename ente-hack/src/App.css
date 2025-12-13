@@ -154,12 +154,9 @@ body {
 }
 
 .category-icon-btn.active {
-  border-color: transparent;
-  background: #2196F3;
-}
-
-.category-icon-btn.active img {
-  filter: brightness(0) invert(1);
+  border-color: #000;
+  border-width: 4px;
+  background: #42A5F5;
 }
 
 /* Option Cards Container - 4 Column Grid */
@@ -221,6 +218,13 @@ body {
   width: 100%;
   height: 100%;
   object-fit: contain;
+  transform: scale(1.4);
+}
+
+/* Shoes category - larger size and bottom padding */
+.category-shoes .option-card-image {
+  transform: scale(1.6);
+  padding-bottom: 20px;
 }
 
 /* Right Side - Preview Panel */
@@ -253,6 +257,7 @@ body {
   position: relative;
   overflow: hidden;
   box-shadow: 0 8px 32px rgba(33, 150, 243, 0.2);
+  outline: 5px solid #000;
 }
 
 /* Radial light rays effect */

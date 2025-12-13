@@ -75,12 +75,12 @@ const App = () => {
   // Render avatar to canvas for transparent download
   const renderAvatarToCanvas = async () => {
     if (!canvasRef.current) return null;
-    
+
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
-    
+
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    
+
     const loadImage = (src) => {
       return new Promise((resolve, reject) => {
         const img = new Image();
@@ -90,24 +90,46 @@ const App = () => {
         img.src = src;
       });
     };
-    
+
     try {
       const baseImage = await loadImage(ducky_base);
-      ctx.drawImage(baseImage, 0, 0, canvas.width, canvas.height);
-      
+
+      // Calculate dimensions to preserve aspect ratio (object-fit: contain)
+      const imgAspect = baseImage.naturalWidth / baseImage.naturalHeight;
+      const canvasAspect = canvas.width / canvas.height;
+
+      let drawWidth, drawHeight, offsetX, offsetY;
+
+      if (imgAspect > canvasAspect) {
+        // Image is wider than canvas - fit to width
+        drawWidth = canvas.width;
+        drawHeight = canvas.width / imgAspect;
+        offsetX = 0;
+        offsetY = (canvas.height - drawHeight) / 2;
+      } else {
+        // Image is taller than canvas - fit to height
+        drawHeight = canvas.height;
+        drawWidth = canvas.height * imgAspect;
+        offsetX = (canvas.width - drawWidth) / 2;
+        offsetY = 0;
+      }
+
+      ctx.drawImage(baseImage, offsetX, offsetY, drawWidth, drawHeight);
+
       const categoriesToRender = ['cap', 'glasses', 'shoes', 'accessories'];
-      
+
       for (const category of categoriesToRender) {
         const selectedId = selectedItems[category];
         if (selectedId && categoryOptions[category]) {
           const option = categoryOptions[category].find(item => item.id === selectedId);
           if (option) {
             const overlayImage = await loadImage(option.src);
-            ctx.drawImage(overlayImage, 0, 0, canvas.width, canvas.height);
+            // Use same dimensions and offset for overlays
+            ctx.drawImage(overlayImage, offsetX, offsetY, drawWidth, drawHeight);
           }
         }
       }
-      
+
       return canvas.toDataURL('image/png');
     } catch (error) {
       console.error('Error rendering avatar:', error);
@@ -340,7 +362,7 @@ const App = () => {
           </div>
 
           {/* Option Cards */}
-          <div className="options-card-container">
+          <div className={`options-card-container category-${selectedCategory}`}>
             {getCurrentOptions().map((option) => (
               <div
                 key={option.id}
@@ -349,8 +371,8 @@ const App = () => {
                   selectedItems[selectedCategory] === option.id ? "selected" : ""
                 }`}
               >
-                <img 
-                  src={option.src} 
+                <img
+                  src={option.src}
                   alt={option.label}
                   className="option-card-image"
                 />

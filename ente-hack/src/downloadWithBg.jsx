@@ -74,34 +74,54 @@ export const renderAvatarWithBackground = async (
   canvas.width = size;
   canvas.height = size;
   const ctx = canvas.getContext('2d');
-  
+
   try {
     // Draw the gradient background
     drawBackground(ctx, size, size);
-    
-    // Calculate avatar size and position (85% of canvas, centered)
-    const avatarSize = size * 0.85;
-    const offset = (size - avatarSize) / 2;
-    
-    // Load and draw base avatar
+
+    // Load base image first to get its aspect ratio
     const baseImage = await loadImage(ducky_base);
-    ctx.drawImage(baseImage, offset, offset, avatarSize, avatarSize);
-    
+
+    // Calculate avatar size (85% of canvas area)
+    const maxSize = size * 0.85;
+
+    // Preserve aspect ratio (object-fit: contain behavior)
+    const imgAspect = baseImage.naturalWidth / baseImage.naturalHeight;
+
+    let drawWidth, drawHeight;
+
+    if (imgAspect > 1) {
+      // Image is wider than tall - fit to width
+      drawWidth = maxSize;
+      drawHeight = maxSize / imgAspect;
+    } else {
+      // Image is taller than wide - fit to height
+      drawHeight = maxSize;
+      drawWidth = maxSize * imgAspect;
+    }
+
+    // Center the avatar on the canvas
+    const offsetX = (size - drawWidth) / 2;
+    const offsetY = (size - drawHeight) / 2;
+
+    // Draw base avatar
+    ctx.drawImage(baseImage, offsetX, offsetY, drawWidth, drawHeight);
+
     // Layer order for overlays
     const categoriesToRender = ['cap', 'glasses', 'shoes', 'accessories'];
-    
-    // Draw each selected overlay
+
+    // Draw each selected overlay with same dimensions
     for (const category of categoriesToRender) {
       const selectedId = selectedItems[category];
       if (selectedId && categoryOptions[category]) {
         const option = categoryOptions[category].find(item => item.id === selectedId);
         if (option) {
           const overlayImage = await loadImage(option.src);
-          ctx.drawImage(overlayImage, offset, offset, avatarSize, avatarSize);
+          ctx.drawImage(overlayImage, offsetX, offsetY, drawWidth, drawHeight);
         }
       }
     }
-    
+
     return canvas.toDataURL('image/png');
   } catch (error) {
     console.error('Error rendering avatar with background:', error);
