@@ -331,7 +331,7 @@ const App = () => {
             <img src={heartIcon} alt="heart" className="heart-icon" />
             by{" "}
             <a
-              href="https://ente.io"
+              href="https://ente.io/?utm_source=duckyDrip"
               target="_blank"
               rel="noopener noreferrer"
               className="ente-link"
