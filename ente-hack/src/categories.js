@@ -1,9 +1,8 @@
 import random from './assets/images/random.svg';
 import glasses from './assets/images/glasses.svg';
 import cap from './assets/images/cap.svg';
-import accessories from './assets/images/hair.svg';
-import pants from './assets/images/pants.svg';
-import shoe from './assets/images/shoe.svg';
+import accessories from './assets/images/accessories.svg';
+import shoe from './assets/images/shoes.svg';
 
 // Categories with icons
 export const categories = [

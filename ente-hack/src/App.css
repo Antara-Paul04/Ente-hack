@@ -57,7 +57,7 @@ body {
   letter-spacing: -1px;
 }
 .reg {
-  font-size: 30px;      /* smaller ® */
+  font-size: 30px;      /* smaller ®️ */
   vertical-align: super; /* optional: superscript feel */
   margin-left: 2px;
 }
@@ -250,5 +250,92 @@ body {
 
   .options-card-container {
     grid-template-columns: 1fr;
+  }
+}
+
+/* Download Button */
+.download-btn-container {
+  margin-top: 32px;
+  display: flex;
+  justify-content: center;
+}
+
+.download-btn {
+  background: #10B981;
+  color: white;
+  border: none;
+  border-radius: 16px;
+  padding: 16px 32px;
+  font-size: 18px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'Gilroy', sans-serif;
+}
+
+.download-btn:hover {
+  background: #059669;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.download-btn:active {
+  transform: translateY(0);
+}
+
+.download-btn:disabled {
+  background: #9CA3AF;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.download-icon {
+  width: 20px;
+  height: 20px;
+  fill: currentColor;
+}
+
+/* Success Message */
+.download-success {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: #10B981;
+  color: white;
+  padding: 12px 24px;
+  border-radius: 12px;
+  font-weight: 500;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  animation: slideIn 0.3s ease-out;
+  z-index: 1000;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .download-btn {
+    padding: 14px 28px;
+    font-size: 16px;
+  }
+  
+  .download-success {
+    top: 10px;
+    right: 10px;
+    left: 10px;
+    text-align: center;
   }
 }

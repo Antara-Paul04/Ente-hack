@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import './App.css';
 import heartIcon from './assets/images/heart.svg';
 import ducky_base from './assets/duckies/ducky_base.svg';
@@ -8,16 +8,25 @@ import { randomizeAvatar } from './randomizer';
 
 const App = () => {
   const [selectedCategory, setSelectedCategory] = useState('glasses');
-  
-  // Independent state for each category
   const [selectedItems, setSelectedItems] = useState({
     cap: null,
     glasses: null,
     accessories: null,
     shoes: null
   });
+  const [isDownloading, setIsDownloading] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
   
   const avatarRef = useRef(null);
+  const canvasRef = useRef(null);
+
+  // Create canvas for rendering avatar
+  useEffect(() => {
+    const canvas = document.createElement('canvas');
+    canvas.width = 512;
+    canvas.height = 512;
+    canvasRef.current = canvas;
+  }, []);
 
   // Handle category click with randomizer
   const handleCategoryClick = (categoryId) => {
@@ -45,7 +54,92 @@ const App = () => {
     return categoryOptions[selectedCategory] || [];
   };
 
-  // Render avatar based on selected options
+  // Render avatar to canvas for download
+  const renderAvatarToCanvas = async () => {
+    if (!canvasRef.current) return null;
+    
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext('2d');
+    
+    // Clear canvas
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    // Create a temporary container for rendering
+    const tempContainer = document.createElement('div');
+    tempContainer.style.width = `${canvas.width}px`;
+    tempContainer.style.height = `${canvas.height}px`;
+    tempContainer.style.position = 'relative';
+    document.body.appendChild(tempContainer);
+    
+    // Function to load an image
+    const loadImage = (src) => {
+      return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+        img.onload = () => resolve(img);
+        img.onerror = reject;
+        img.src = src;
+      });
+    };
+    
+    try {
+      // Load base image
+      const baseImage = await loadImage(ducky_base);
+      ctx.drawImage(baseImage, 0, 0, canvas.width, canvas.height);
+      
+      // Load and draw selected items
+      const categoriesToRender = ['cap', 'glasses', 'shoes', 'accessories'];
+      
+      for (const category of categoriesToRender) {
+        const selectedId = selectedItems[category];
+        if (selectedId && categoryOptions[category]) {
+          const option = categoryOptions[category].find(item => item.id === selectedId);
+          if (option) {
+            const overlayImage = await loadImage(option.src);
+            ctx.drawImage(overlayImage, 0, 0, canvas.width, canvas.height);
+          }
+        }
+      }
+      
+      return canvas.toDataURL('image/png');
+    } catch (error) {
+      console.error('Error rendering avatar:', error);
+      return null;
+    } finally {
+      document.body.removeChild(tempContainer);
+    }
+  };
+
+  // Download avatar as PNG
+  const handleDownload = async () => {
+    setIsDownloading(true);
+    
+    try {
+      // Render avatar to canvas
+      const dataUrl = await renderAvatarToCanvas();
+      
+      if (dataUrl) {
+        // Create download link
+        const link = document.createElement('a');
+        link.download = 'ducky-drip-avatar.png';
+        link.href = dataUrl;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        // Show success message
+        setShowSuccess(true);
+        setTimeout(() => setShowSuccess(false), 3000);
+      }
+    } catch (error) {
+      console.error('Download failed:', error);
+      alert('Failed to download avatar. Please try again.');
+    } finally {
+      setIsDownloading(false);
+    }
+  };
+
+  // Render avatar preview
   const renderAvatar = (size = "normal") => {
     const scale = size === "large" ? 1 : 1;
     const baseSize = 500 * scale;
@@ -156,7 +250,7 @@ const App = () => {
         {/* Header */}
         <div className="header">
           <p className="title">
-            Ducky Drip <span className="reg">®</span>
+            Ducky Drip <span className="reg">®️</span>
           </p>
 
           <p className="subtitle">
@@ -211,6 +305,27 @@ const App = () => {
               </div>
             ))}
           </div>
+          
+          {/* Download Button */}
+          <div className="download-btn-container">
+            <button 
+              className="download-btn"
+              onClick={handleDownload}
+              disabled={isDownloading}
+            >
+              {isDownloading ? (
+                'Downloading...'
+              ) : (
+                <>
+                  <svg className="download-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 16L12 4M12 16L8 12M12 16L16 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    <path d="M20 20H4" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                  </svg>
+                  Download Avatar
+                </>
+              )}
+            </button>
+          </div>
         </div>
       </div>
 
@@ -218,6 +333,13 @@ const App = () => {
       <div className="preview-panel">
         <div className="avatar-preview-box">{renderAvatar()}</div>
       </div>
+      
+      {/* Success Message */}
+      {showSuccess && (
+        <div className="download-success">
+          Avatar downloaded successfully!
+        </div>
+      )}
     </div>
   );
 };
