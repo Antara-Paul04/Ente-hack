@@ -1,10 +1,14 @@
 import React, { useState, useRef, useEffect } from 'react';
 import './App.css';
 import heartIcon from './assets/images/heart.svg';
+import shareIcon from './assets/images/share.svg';
+import downloadIcon from './assets/images/download.svg';
+import randomIcon from './assets/images/random.svg';
 import ducky_base from './assets/duckies/ducky_base.svg';
 import { categories } from './categories';
 import { categoryOptions } from './categoryOptions';
 import { randomizeAvatar } from './randomizer';
+import { downloadAvatarWithBackground } from './downloadWithBg';
 
 const App = () => {
   const [selectedCategory, setSelectedCategory] = useState('glasses');
@@ -16,9 +20,11 @@ const App = () => {
   });
   const [isDownloading, setIsDownloading] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
+  const [showDownloadMenu, setShowDownloadMenu] = useState(false);
   
   const avatarRef = useRef(null);
   const canvasRef = useRef(null);
+  const downloadMenuRef = useRef(null);
 
   // Create canvas for rendering avatar
   useEffect(() => {
@@ -26,6 +32,18 @@ const App = () => {
     canvas.width = 512;
     canvas.height = 512;
     canvasRef.current = canvas;
+  }, []);
+
+  // Close download menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (downloadMenuRef.current && !downloadMenuRef.current.contains(event.target)) {
+        setShowDownloadMenu(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
   // Handle category click with randomizer
@@ -54,24 +72,15 @@ const App = () => {
     return categoryOptions[selectedCategory] || [];
   };
 
-  // Render avatar to canvas for download
+  // Render avatar to canvas for transparent download
   const renderAvatarToCanvas = async () => {
     if (!canvasRef.current) return null;
     
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
     
-    // Clear canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     
-    // Create a temporary container for rendering
-    const tempContainer = document.createElement('div');
-    tempContainer.style.width = `${canvas.width}px`;
-    tempContainer.style.height = `${canvas.height}px`;
-    tempContainer.style.position = 'relative';
-    document.body.appendChild(tempContainer);
-    
-    // Function to load an image
     const loadImage = (src) => {
       return new Promise((resolve, reject) => {
         const img = new Image();
@@ -83,11 +92,9 @@ const App = () => {
     };
     
     try {
-      // Load base image
       const baseImage = await loadImage(ducky_base);
       ctx.drawImage(baseImage, 0, 0, canvas.width, canvas.height);
       
-      // Load and draw selected items
       const categoriesToRender = ['cap', 'glasses', 'shoes', 'accessories'];
       
       for (const category of categoriesToRender) {
@@ -105,21 +112,48 @@ const App = () => {
     } catch (error) {
       console.error('Error rendering avatar:', error);
       return null;
-    } finally {
-      document.body.removeChild(tempContainer);
     }
   };
 
-  // Download avatar as PNG
-  const handleDownload = async () => {
+  // Randomize handler
+  const handleRandomize = () => {
+    const randomItems = randomizeAvatar(categoryOptions);
+    setSelectedItems(randomItems);
+  };
+
+  // Share handler
+  const handleShare = async () => {
+    try {
+      const dataUrl = await renderAvatarToCanvas();
+      if (dataUrl && navigator.share) {
+        const blob = await (await fetch(dataUrl)).blob();
+        const file = new File([blob], 'ducky-drip-avatar.png', { type: 'image/png' });
+        await navigator.share({
+          title: 'My Ducky Drip Avatar',
+          files: [file]
+        });
+      } else {
+        alert('Share functionality is not available on this device. Try downloading instead!');
+      }
+    } catch (error) {
+      console.error('Share failed:', error);
+    }
+  };
+
+  // Toggle download menu
+  const handleDownloadClick = () => {
+    setShowDownloadMenu(!showDownloadMenu);
+  };
+
+  // Download transparent handler
+  const handleDownloadTransparent = async () => {
     setIsDownloading(true);
+    setShowDownloadMenu(false);
     
     try {
-      // Render avatar to canvas
       const dataUrl = await renderAvatarToCanvas();
       
       if (dataUrl) {
-        // Create download link
         const link = document.createElement('a');
         link.download = 'ducky-drip-avatar.png';
         link.href = dataUrl;
@@ -127,7 +161,6 @@ const App = () => {
         link.click();
         document.body.removeChild(link);
         
-        // Show success message
         setShowSuccess(true);
         setTimeout(() => setShowSuccess(false), 3000);
       }
@@ -139,23 +172,39 @@ const App = () => {
     }
   };
 
-  // Render avatar preview
-  const renderAvatar = (size = "normal") => {
-    const scale = size === "large" ? 1 : 1;
-    const baseSize = 500 * scale;
+  // Download with background handler
+  const handleDownloadWithBg = async () => {
+    setIsDownloading(true);
+    setShowDownloadMenu(false);
+    
+    try {
+      const success = await downloadAvatarWithBackground(
+        ducky_base,
+        selectedItems,
+        categoryOptions,
+        'ducky-drip-avatar-bg.png'
+      );
+      
+      if (success) {
+        setShowSuccess(true);
+        setTimeout(() => setShowSuccess(false), 3000);
+      } else {
+        alert('Failed to download avatar. Please try again.');
+      }
+    } catch (error) {
+      console.error('Download with background failed:', error);
+      alert('Failed to download avatar. Please try again.');
+    } finally {
+      setIsDownloading(false);
+    }
+  };
 
+  // Render avatar preview
+  const renderAvatar = () => {
     return (
       <div
-        ref={size === "normal" ? avatarRef : null}
+        ref={avatarRef}
         className="avatar-container"
-        style={{
-          width: baseSize,
-          height: baseSize,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          position: "relative"
-        }}
       >
         {/* Base Avatar */}
         <img
@@ -239,20 +288,22 @@ const App = () => {
             }}
           />
         )}
-
       </div>
     );
   };
 
+  // Filter out 'random' from visible categories (it's the dice button)
+  const displayCategories = categories.filter(cat => cat.id !== 'random');
+
   return (
     <div className="app-container">
+      {/* Left Side */}
       <div className="main-wrapper">
         {/* Header */}
         <div className="header">
-          <p className="title">
-            Ducky Drip <span className="reg">®️</span>
-          </p>
-
+          <h1 className="title">
+            Ducky Drip<span className="reg">®</span>
+          </h1>
           <p className="subtitle">
             Crafted with
             <img src={heartIcon} alt="heart" className="heart-icon" />
@@ -268,10 +319,11 @@ const App = () => {
           </p>
         </div>
 
-        {/* Left Panel */}
+        {/* Customization Panel */}
         <div className="customization-panel">
+          {/* Category Icons */}
           <div className="category-icons">
-            {categories.map((category) => (
+            {displayCategories.map((category) => (
               <button
                 key={category.id}
                 onClick={() => handleCategoryClick(category.id)}
@@ -287,7 +339,7 @@ const App = () => {
             ))}
           </div>
 
-          {/* Option Cards - displays current category options */}
+          {/* Option Cards */}
           <div className="options-card-container">
             {getCurrentOptions().map((option) => (
               <div
@@ -305,33 +357,66 @@ const App = () => {
               </div>
             ))}
           </div>
-          
-          {/* Download Button */}
-          <div className="download-btn-container">
-            <button 
-              className="download-btn"
-              onClick={handleDownload}
-              disabled={isDownloading}
-            >
-              {isDownloading ? (
-                'Downloading...'
-              ) : (
-                <>
-                  <svg className="download-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M12 16L12 4M12 16L8 12M12 16L16 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    <path d="M20 20H4" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-                  </svg>
-                  Download Avatar
-                </>
-              )}
-            </button>
-          </div>
         </div>
       </div>
 
-      {/* Right Panel */}
+      {/* Right Side - Preview */}
       <div className="preview-panel">
-        <div className="avatar-preview-box">{renderAvatar()}</div>
+        <div className="preview-wrapper">
+          <div className="preview-box">
+            <div className="avatar-preview-box">
+              {renderAvatar()}
+            </div>
+          </div>
+          
+          {/* Action Buttons */}
+          <div className="action-buttons">
+            <button className="action-btn" onClick={handleRandomize} title="Randomize">
+              <img src={randomIcon} alt="Randomize" className="action-icon" />
+            </button>
+            <button className="action-btn" onClick={handleShare} title="Share">
+              <img src={shareIcon} alt="Share" className="action-icon" />
+            </button>
+            
+            {/* Download Button with Dropdown */}
+            <div className="download-btn-wrapper" ref={downloadMenuRef}>
+              <button 
+                className="action-btn" 
+                onClick={handleDownloadClick} 
+                title="Download"
+                disabled={isDownloading}
+              >
+                <img src={downloadIcon} alt="Download" className="action-icon" />
+              </button>
+              
+              {/* Download Dropdown Menu */}
+              {showDownloadMenu && (
+                <div className="download-menu">
+                  <button 
+                    className="download-menu-item"
+                    onClick={handleDownloadTransparent}
+                  >
+                    <span className="download-menu-icon">🔍</span>
+                    <span className="download-menu-text">
+                      <span className="download-menu-title">Transparent</span>
+                      <span className="download-menu-subtitle">PNG with no background</span>
+                    </span>
+                  </button>
+                  <button 
+                    className="download-menu-item"
+                    onClick={handleDownloadWithBg}
+                  >
+                    <span className="download-menu-icon">🎨</span>
+                    <span className="download-menu-text">
+                      <span className="download-menu-title">With Background</span>
+                      <span className="download-menu-subtitle">PNG with blue gradient</span>
+                    </span>
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
       </div>
       
       {/* Success Message */}
