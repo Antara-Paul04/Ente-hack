@@ -8,8 +8,16 @@ import pants from './assets/images/pants.svg';
 import shoe from './assets/images/shoe.svg';
 import heartIcon from './assets/images/heart.svg';
 import ducky_base from './assets/duckies/ducky_base.svg';
-import policeHat from './assets/hats/police cap.svg';
-import skydiverHat from './assets/hats/sky diving.svg';
+import cap1 from './assets/hats/CAP 1.svg';
+import cap2 from './assets/hats/CAP 2.svg';
+import cap3 from './assets/hats/CAP 3.svg';
+import cap4 from './assets/hats/CAP 4.svg';
+import cap5 from './assets/hats/CAP 5.svg';
+import cap6 from './assets/hats/CAP 6.svg';
+import cap7 from './assets/hats/CAP 7.svg';
+import cap8 from './assets/hats/CAP 8.svg';
+import cap9 from './assets/hats/CAP 9.svg';
+import cap10 from './assets/hats/CAP 10.svg';
 
 const App = () => {
   const [selectedCategory, setSelectedCategory] = useState('glasses');
@@ -52,8 +60,16 @@ const App = () => {
 
   // Hat options
   const HatOptions = [
-    { id: '1', src: policeHat, label: 'Police' },
-    { id: '2', src: skydiverHat, label: 'Sky diver' }
+    { id: '1', src: cap1, label: 'Cap 1' },
+    { id: '2', src: cap2, label: 'Cap 2' },
+    { id: '3', src: cap3, label: 'Cap 3' },
+    { id: '4', src: cap4, label: 'Cap 4' },
+    { id: '5', src: cap5, label: 'Cap 5' },
+    { id: '6', src: cap6, label: 'Cap 6' },
+    { id: '7', src: cap7, label: 'Cap 7' },
+    { id: '8', src: cap8, label: 'Cap 8' },
+    { id: '9', src: cap9, label: 'Cap 9' },
+    { id: '10', src: cap10, label: 'Cap 10' }
   ];
 
   // Render avatar based on selected options
@@ -88,7 +104,7 @@ const App = () => {
         {/* Selected Hat Overlay */}
         {selectedHat && (
           <img
-            src={selectedHat === '1' ? policeHat : skydiverHat}
+            src={HatOptions.find(hat => hat.id === selectedHat)?.src}
             alt={`${selectedHat} hat`}
             style={{
               position: "absolute",
