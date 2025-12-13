@@ -1,19 +1,63 @@
 import React, { useState, useRef } from 'react';
 import './App.css';
+import random from './assets/images/random.svg';
+import glasses from './assets/images/glasses.svg';
+import cap from './assets/images/cap.svg';
+import hair from './assets/images/hair.svg';
+import pants from './assets/images/pants.svg';
+import shoe from './assets/images/shoe.svg';
+import heartIcon from './assets/images/heart.svg'
 
 const App = () => {
+  const [selectedCategory, setSelectedCategory] = useState('face');
   const [selectedOptions, setSelectedOptions] = useState({
     face: 0,
     eyes: 0,
     mouth: 0,
     hair: 0,
     accessories: 0,
-    clothes: 0,
-    background: 0
+    clothes: 0
   });
 
   const [showShareCard, setShowShareCard] = useState(false);
   const avatarRef = useRef(null);
+
+  // Categories with icons
+  const categories = [
+  { 
+    id: 'random', 
+    label: 'Randomizer', 
+    icon: <img src={random} alt="Randomizer" />},
+  
+  { 
+    id: 'glasses', 
+    label: 'Glasses', 
+    icon: <img src={glasses} alt="Glasses" />
+  },
+  { 
+    id: 'cap', 
+    label: 'Cap', 
+    icon: <img src={cap} alt="Cap" />
+  },
+
+  { 
+    id: 'hair', 
+    label: 'Hair', 
+    icon: <img src={hair} alt="Hair"  />
+  },
+  { 
+    id: 'clothes', 
+    label: 'Clothes', 
+    icon: <img src={pants} alt="Clothes" />
+  },
+
+  { 
+    id: 'shoes', 
+    label: 'Shoes', 
+    icon: <img src={shoe} alt="Shoes" />
+  },
+];
+
 
   // Avatar component options with random shapes
   const avatarOptions = {
@@ -74,8 +118,7 @@ const App = () => {
       { type: 'bow', color: '#E91E63' },
       { type: 'headband', color: '#9B59B6' },
       { type: 'earrings', color: '#FFD700' },
-      { type: 'mask', color: '#1ABC9C' },
-      { type: 'bandana', color: '#E67E22' }
+      { type: 'mask', color: '#1ABC9C' }
     ],
     clothes: [
       { type: 'tshirt', color: '#3498DB' },
@@ -86,20 +129,7 @@ const App = () => {
       { type: 'tank', color: '#1ABC9C' },
       { type: 'jacket', color: '#E67E22' },
       { type: 'polo', color: '#27AE60' },
-      { type: 'shirt', color: '#F39C12' },
-      { type: 'vest', color: '#C0392B' }
-    ],
-    background: [
-      { color: '#FFE5E5', pattern: 'solid' },
-      { color: '#E5F3FF', pattern: 'solid' },
-      { color: '#E8F5E9', pattern: 'solid' },
-      { color: '#FFF8E1', pattern: 'solid' },
-      { color: '#F3E5F5', pattern: 'solid' },
-      { color: '#E0F2F1', pattern: 'solid' },
-      { color: '#FBE9E7', pattern: 'dots' },
-      { color: '#E8EAF6', pattern: 'dots' },
-      { color: '#F1F8E9', pattern: 'lines' },
-      { color: '#FFF3E0', pattern: 'grid' }
+      { type: 'shirt', color: '#F39C12' }
     ]
   };
 
@@ -113,9 +143,8 @@ const App = () => {
       eyes: Math.floor(Math.random() * 10),
       mouth: Math.floor(Math.random() * 10),
       hair: Math.floor(Math.random() * 10),
-      accessories: Math.floor(Math.random() * 10),
-      clothes: Math.floor(Math.random() * 10),
-      background: Math.floor(Math.random() * 10)
+      accessories: Math.floor(Math.random() * 9),
+      clothes: Math.floor(Math.random() * 9)
     });
   };
 
@@ -126,8 +155,7 @@ const App = () => {
       mouth: 0,
       hair: 0,
       accessories: 0,
-      clothes: 0,
-      background: 0
+      clothes: 0
     });
   };
 
@@ -182,7 +210,6 @@ const App = () => {
     const hair = avatarOptions.hair[selectedOptions.hair];
     const accessories = avatarOptions.accessories[selectedOptions.accessories];
     const clothes = avatarOptions.clothes[selectedOptions.clothes];
-    const background = avatarOptions.background[selectedOptions.background];
 
     return (
       <div 
@@ -191,12 +218,7 @@ const App = () => {
         style={{
           width: `${baseSize}px`,
           height: `${baseSize}px`,
-          backgroundColor: background.color,
-          backgroundImage: background.pattern === 'dots' ? 'radial-gradient(circle, rgba(0,0,0,0.05) 1px, transparent 1px)' :
-                           background.pattern === 'lines' ? 'repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(0,0,0,0.03) 10px, rgba(0,0,0,0.03) 20px)' :
-                           background.pattern === 'grid' ? 'linear-gradient(rgba(0,0,0,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.03) 1px, transparent 1px)' : 'none',
-          backgroundSize: background.pattern === 'dots' ? '20px 20px' :
-                         background.pattern === 'grid' ? '20px 20px' : 'auto',
+          backgroundColor: '#E5E5E5'
         }}
       >
         {/* Clothes */}
@@ -403,84 +425,59 @@ const App = () => {
       <div className="main-wrapper">
         {/* Header */}
         <div className="header">
-          <h1 className="title">Avatar Factory</h1>
-          <p className="subtitle">Design your unique character</p>
+          <p className="title">
+            Ducky Drip <span className="reg">®</span>
+          </p>
+
+            <p className="subtitle">
+              Crafted with 
+              <img src={heartIcon} alt="heart" className="heart-icon"/>
+              by <a href="https://ente.io" target="_blank" rel="noopener noreferrer" className="ente-link">ente</a>
+            </p>
         </div>
 
         {/* Main Content */}
         <div className="content-grid">
-          {/* Avatar Preview */}
-          <div className="preview-section">
-            <div className="avatar-preview">
+          {/* Left Panel - Customization */}
+          <div className="customization-panel">
+            {/* Category Icons */}
+            <div className="category-icons">
+              {categories.map((category) => (
+                <button
+                  key={category.id}
+                  onClick={() => setSelectedCategory(category.id)}
+                  className={`category-icon-btn ${selectedCategory === category.id ? 'active' : ''}`}
+                  title={category.label}
+                >
+                  <span className="icon">{category.icon}</span>
+                </button>
+              ))}
+            </div>
+
+            {/* Options Grid */}
+            <div className="options-grid-container">
+              {avatarOptions[selectedCategory]?.map((option, index) => (
+                <button
+                  key={index}
+                  onClick={() => updateOption(selectedCategory, index)}
+                  className={`option-box ${selectedOptions[selectedCategory] === index ? 'selected' : ''}`}
+                  style={{
+                    backgroundColor: option.color && option.color !== 'transparent' ? option.color : '#F5F5F5',
+                  }}
+                >
+                  {option.type === 'none' && <span className="none-text">—</span>}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Right Panel - Avatar Preview */}
+          <div className="preview-panel">
+            <div className="avatar-preview-box">
               {renderAvatar()}
             </div>
-
-            {/* Action Buttons */}
-            <div className="action-buttons">
-              <button onClick={randomize} className="btn btn-shuffle">
-                🎲 Shuffle
-              </button>
-              <button onClick={reset} className="btn btn-reset">
-                🔄 Reset
-              </button>
-            </div>
-
-            <div className="share-buttons">
-              <button onClick={downloadAvatar} className="btn btn-download">
-                ⬇️ Download
-              </button>
-              <button onClick={shareAvatar} className="btn btn-share">
-                📤 Share
-              </button>
-            </div>
-          </div>
-
-          {/* Customization Options */}
-          <div className="customization-section">
-            <h2 className="customization-title">Customize</h2>
-
-            {Object.keys(avatarOptions).map((category) => (
-              <div key={category} className="category-section">
-                <h3 className="category-title">{category}</h3>
-                <div className="options-grid">
-                  {avatarOptions[category].map((option, index) => (
-                    <button
-                      key={index}
-                      onClick={() => updateOption(category, index)}
-                      className={`option-button ${selectedOptions[category] === index ? 'selected' : ''}`}
-                      style={{
-                        backgroundColor: option.color || option.type === 'none' ? (option.color === 'transparent' ? '#f0f0f0' : option.color) : '#fff',
-                      }}
-                    >
-                      {option.type === 'none' ? '—' : ''}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            ))}
           </div>
         </div>
-
-        {/* Share Card Modal */}
-        {showShareCard && (
-          <div className="modal-overlay" onClick={() => setShowShareCard(false)}>
-            <div className="share-card" onClick={(e) => e.stopPropagation()}>
-              <h2 className="share-card-title">My Avatar</h2>
-              
-              <div className="share-card-avatar">
-                {renderAvatar('large')}
-              </div>
-
-              <p className="share-card-text">
-                Created with Avatar Factory ✨
-              </p>
-
-              <button onClick={() => setShowShareCard(false)} className="btn btn-close">
-                Close
-              </button>
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );
