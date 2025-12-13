@@ -134,7 +134,14 @@ body {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 16px;
+
+  height: 320px; 
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  padding-right: 4px;
 }
+
 
 .option-box {
   aspect-ratio: 1;

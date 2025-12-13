@@ -62,7 +62,7 @@ const App = () => {
 
   // Avatar component options with random shapes
   const avatarOptions = {
-    face: [
+    glasses: [
       { color: '#FFD4A3', shape: 'circle' },
       { color: '#F4A460', shape: 'circle' },
       { color: '#DEB887', shape: 'circle' },
@@ -74,7 +74,7 @@ const App = () => {
       { color: '#FFE4C4', shape: 'circle' },
       { color: '#FFDEAD', shape: 'rounded' }
     ],
-    eyes: [
+    cap: [
       { type: 'dots', color: '#2C3E50' },
       { type: 'circles', color: '#34495E' },
       { type: 'stars', color: '#E74C3C' },
@@ -86,7 +86,7 @@ const App = () => {
       { type: 'crosses', color: '#E67E22' },
       { type: 'sparkles', color: '#16A085' }
     ],
-    mouth: [
+    hair: [
       { type: 'smile', color: '#E74C3C' },
       { type: 'grin', color: '#C0392B' },
       { type: 'line', color: '#8E44AD' },
@@ -98,7 +98,7 @@ const App = () => {
       { type: 'dots', color: '#E67E22' },
       { type: 'curved', color: '#AB47BC' }
     ],
-    hair: [
+    clothes: [
       { type: 'spiky', color: '#2C3E50' },
       { type: 'curly', color: '#8B4513' },
       { type: 'wavy', color: '#FFD700' },
@@ -110,7 +110,7 @@ const App = () => {
       { type: 'afro', color: '#1ABC9C' },
       { type: 'mohawk', color: '#3498DB' }
     ],
-    accessories: [
+    shoes: [
       { type: 'none', color: 'transparent' },
       { type: 'glasses', color: '#2C3E50' },
       { type: 'sunglasses', color: '#34495E' },
