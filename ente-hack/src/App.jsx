@@ -1,5 +1,4 @@
-import React, { useState } from 'react';
-import { Download, Share2, Shuffle, RotateCcw } from 'lucide-react';
+import React, { useState, useRef } from 'react';
 import './App.css';
 
 const App = () => {
@@ -14,6 +13,7 @@ const App = () => {
   });
 
   const [showShareCard, setShowShareCard] = useState(false);
+  const avatarRef = useRef(null);
 
   // Avatar component options with random shapes
   const avatarOptions = {
@@ -131,9 +131,40 @@ const App = () => {
     });
   };
 
-  const downloadAvatar = () => {
-    // Simple download simulation
-    alert('Download functionality would save the avatar as an image!');
+  const downloadAvatar = async () => {
+    try {
+      const avatarElement = avatarRef.current;
+      if (!avatarElement) return;
+
+      // Dynamically import html2canvas
+      const html2canvas = (await import('https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/+esm')).default;
+      
+      // Convert to canvas
+      const canvas = await html2canvas(avatarElement, {
+        backgroundColor: null,
+        scale: 3, // Higher quality
+        logging: false,
+        useCORS: true,
+        width: 200,
+        height: 200
+      });
+
+      // Convert canvas to blob and download
+      canvas.toBlob((blob) => {
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `my-avatar-${Date.now()}.png`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+      }, 'image/png');
+      
+    } catch (error) {
+      console.error('Error downloading avatar:', error);
+      alert('Failed to download avatar. Please try again.');
+    }
   };
 
   const shareAvatar = () => {
@@ -154,16 +185,20 @@ const App = () => {
     const background = avatarOptions.background[selectedOptions.background];
 
     return (
-      <div className="avatar-container" style={{
-        width: `${baseSize}px`,
-        height: `${baseSize}px`,
-        backgroundColor: background.color,
-        backgroundImage: background.pattern === 'dots' ? 'radial-gradient(circle, rgba(0,0,0,0.05) 1px, transparent 1px)' :
-                         background.pattern === 'lines' ? 'repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(0,0,0,0.03) 10px, rgba(0,0,0,0.03) 20px)' :
-                         background.pattern === 'grid' ? 'linear-gradient(rgba(0,0,0,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.03) 1px, transparent 1px)' : 'none',
-        backgroundSize: background.pattern === 'dots' ? '20px 20px' :
-                       background.pattern === 'grid' ? '20px 20px' : 'auto',
-      }}>
+      <div 
+        ref={size === 'normal' ? avatarRef : null}
+        className="avatar-container" 
+        style={{
+          width: `${baseSize}px`,
+          height: `${baseSize}px`,
+          backgroundColor: background.color,
+          backgroundImage: background.pattern === 'dots' ? 'radial-gradient(circle, rgba(0,0,0,0.05) 1px, transparent 1px)' :
+                           background.pattern === 'lines' ? 'repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(0,0,0,0.03) 10px, rgba(0,0,0,0.03) 20px)' :
+                           background.pattern === 'grid' ? 'linear-gradient(rgba(0,0,0,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.03) 1px, transparent 1px)' : 'none',
+          backgroundSize: background.pattern === 'dots' ? '20px 20px' :
+                         background.pattern === 'grid' ? '20px 20px' : 'auto',
+        }}
+      >
         {/* Clothes */}
         <div className="avatar-clothes" style={{
           width: `${baseSize * 0.7}px`,
@@ -383,19 +418,19 @@ const App = () => {
             {/* Action Buttons */}
             <div className="action-buttons">
               <button onClick={randomize} className="btn btn-shuffle">
-                <Shuffle size={18} /> Shuffle
+                🎲 Shuffle
               </button>
               <button onClick={reset} className="btn btn-reset">
-                <RotateCcw size={18} /> Reset
+                🔄 Reset
               </button>
             </div>
 
             <div className="share-buttons">
               <button onClick={downloadAvatar} className="btn btn-download">
-                <Download size={20} /> Download
+                ⬇️ Download
               </button>
               <button onClick={shareAvatar} className="btn btn-share">
-                <Share2 size={20} /> Share
+                📤 Share
               </button>
             </div>
           </div>
