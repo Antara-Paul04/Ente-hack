@@ -29,10 +29,13 @@ body {
   background: #fff;
   font-family: 'Gilroy', 'Comic Neue', cursive; /* Use Gilroy */
   padding: 32px;
+  display: flex;
+  flex-direction: row;
+  gap: 32px;
+  align-items: stretch;
 }
 
 .main-wrapper {
-  max-width: 1400px;
   margin: 0 auto;
 }
 
@@ -73,13 +76,6 @@ body {
   width: 2vw;
 }
 
-/* Content Grid */
-.content-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 32px;
-  align-items: start;
-}
 
 @media (max-width: 968px) {
   .content-grid {
@@ -91,7 +87,7 @@ body {
 .customization-panel {
   background: #F8F8F8;
   border-radius: 24px;
-  padding: 30px;
+  padding: 32px;
 }
 
 /* Category Icons */
@@ -173,27 +169,29 @@ body {
 
 /* Preview Panel */
 .preview-panel {
+  flex: 1 1 auto;
+  min-width: 80%;
   background: #E5E5E5;
   border-radius: 24px;
   padding: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 600px;
 }
 
 .avatar-preview-box {
   display: flex;
   justify-content: center;
   align-items: center;
+  width: 80%;
+  height: 80%;
 }
+
 
 /* Avatar Container */
 .avatar-container {
   position: relative;
-  border-radius: 24px;
   overflow: hidden;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.15);
 }
 
 /* Avatar Parts */
@@ -442,6 +440,15 @@ body {
   .preview-panel {
     padding: 20px;
   }
+  .preview-panel {
+  width: fit-content;
+  height: fit-content;   /* 👈 hug contents */
+  flex: 0 0 auto;       /* 👈 don't grow */
+  background: #E5E5E5;
+  border-radius: 24px;
+  padding: 40px;
+}
+
 
   .category-icons {
     grid-template-columns: repeat(3, 1fr);
