@@ -126,8 +126,8 @@ body {
 }
 .category-icon-btn img,
 .category-icon-btn svg {
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
   object-fit: contain;
   display: block;
 }
@@ -157,7 +157,7 @@ body {
   background: #fff;
   border: 2px solid #E0E0E0;
   border-radius: 20px;
-  padding: 16px;
+  padding: 0px;
   cursor: pointer;
   transition: all 0.3s;
   display: flex;

@@ -1,76 +1,49 @@
 import React, { useState, useRef } from 'react';
 import './App.css';
-import random from './assets/images/random.svg';
-import glasses from './assets/images/glasses.svg';
-import cap from './assets/images/cap.svg';
-import hair from './assets/images/hair.svg';
-import pants from './assets/images/pants.svg';
-import shoe from './assets/images/shoe.svg';
 import heartIcon from './assets/images/heart.svg';
 import ducky_base from './assets/duckies/ducky_base.svg';
-import cap1 from './assets/hats/CAP 1.svg';
-import cap2 from './assets/hats/CAP 2.svg';
-import cap3 from './assets/hats/CAP 3.svg';
-import cap4 from './assets/hats/CAP 4.svg';
-import cap5 from './assets/hats/CAP 5.svg';
-import cap6 from './assets/hats/CAP 6.svg';
-import cap7 from './assets/hats/CAP 7.svg';
-import cap8 from './assets/hats/CAP 8.svg';
-import cap9 from './assets/hats/CAP 9.svg';
-import cap10 from './assets/hats/CAP 10.svg';
+import { categories } from './categories';
+import { categoryOptions } from './categoryOptions';
+import { randomizeAvatar } from './randomizer';
 
 const App = () => {
   const [selectedCategory, setSelectedCategory] = useState('glasses');
-  const [selectedHat, setSelectedHat] = useState(null); // '1' or '2' or null
+  
+  // Independent state for each category
+  const [selectedItems, setSelectedItems] = useState({
+    cap: null,
+    glasses: null,
+    accessories: null,
+    shoes: null
+  });
+  
   const avatarRef = useRef(null);
 
-  // Categories with icons
-  const categories = [
-    { 
-      id: 'random', 
-      label: 'Randomizer', 
-      icon: <img src={random} alt="Randomizer" />
-    },
-    { 
-      id: 'glasses', 
-      label: 'Glasses', 
-      icon: <img src={glasses} alt="Glasses" />
-    },
-    { 
-      id: 'cap', 
-      label: 'Cap', 
-      icon: <img src={cap} alt="Cap" />
-    },
-    { 
-      id: 'hair', 
-      label: 'Hair', 
-      icon: <img src={hair} alt="Hair" />
-    },
-    { 
-      id: 'clothes', 
-      label: 'Clothes', 
-      icon: <img src={pants} alt="Clothes" />
-    },
-    { 
-      id: 'shoes', 
-      label: 'Shoes', 
-      icon: <img src={shoe} alt="Shoes" />
-    },
-  ];
+  // Handle category click with randomizer
+  const handleCategoryClick = (categoryId) => {
+    if (categoryId === 'random') {
+      const randomItems = randomizeAvatar(categoryOptions);
+      setSelectedItems(randomItems);
+    } else {
+      setSelectedCategory(categoryId);
+    }
+  };
 
-  // Hat options
-  const HatOptions = [
-    { id: '1', src: cap1, label: 'Cap 1' },
-    { id: '2', src: cap2, label: 'Cap 2' },
-    { id: '3', src: cap3, label: 'Cap 3' },
-    { id: '4', src: cap4, label: 'Cap 4' },
-    { id: '5', src: cap5, label: 'Cap 5' },
-    { id: '6', src: cap6, label: 'Cap 6' },
-    { id: '7', src: cap7, label: 'Cap 7' },
-    { id: '8', src: cap8, label: 'Cap 8' },
-    { id: '9', src: cap9, label: 'Cap 9' },
-    { id: '10', src: cap10, label: 'Cap 10' }
-  ];
+  // Handle option selection
+  const handleOptionClick = (category, optionId) => {
+    setSelectedItems(prev => ({
+      ...prev,
+      [category]: prev[category] === optionId ? null : optionId
+    }));
+  };
+
+  // Get current category options
+  const getCurrentOptions = () => {
+    if (selectedCategory === 'random') {
+      return [];
+    }
+    return categoryOptions[selectedCategory] || [];
+  };
 
   // Render avatar based on selected options
   const renderAvatar = (size = "normal") => {
@@ -101,11 +74,11 @@ const App = () => {
           }}
         />
         
-        {/* Selected Hat Overlay */}
-        {selectedHat && (
+        {/* Selected Cap Overlay */}
+        {selectedItems.cap && categoryOptions.cap && (
           <img
-            src={HatOptions.find(hat => hat.id === selectedHat)?.src}
-            alt={`${selectedHat} hat`}
+            src={categoryOptions.cap.find(item => item.id === selectedItems.cap)?.src}
+            alt="Selected cap"
             style={{
               position: "absolute",
               top: 0,
@@ -117,6 +90,62 @@ const App = () => {
             }}
           />
         )}
+
+        {/* Selected Glasses Overlay */}
+        {selectedItems.glasses && categoryOptions.glasses && (
+          <img
+            src={categoryOptions.glasses.find(item => item.id === selectedItems.glasses)?.src}
+            alt="Selected glasses"
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              width: "100%",
+              height: "100%",
+              objectFit: "contain",
+              pointerEvents: "none"
+            }}
+          />
+        )}
+
+        {/* Selected Shoes Overlay */}
+        {selectedItems.shoes && categoryOptions.shoes && (
+          <img
+            src={categoryOptions.shoes.find(item => item.id === selectedItems.shoes)?.src}
+            alt="Selected shoes"
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              width: "100%",
+              height: "100%",
+              objectFit: "contain",
+              pointerEvents: "none"
+            }}
+          />
+        )}
+
+        {/* Selected Accessories Overlay */}
+        {selectedItems.accessories && categoryOptions.accessories && (
+          <img
+            src={
+              categoryOptions.accessories.find(
+                item => item.id === selectedItems.accessories
+              )?.src
+            }
+            alt="Selected accessory"
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              width: "100%",
+              height: "100%",
+              objectFit: "contain",
+              pointerEvents: "none"
+            }}
+          />
+        )}
+
       </div>
     );
   };
@@ -151,32 +180,32 @@ const App = () => {
             {categories.map((category) => (
               <button
                 key={category.id}
-                onClick={() => setSelectedCategory(category.id)}
+                onClick={() => handleCategoryClick(category.id)}
                 className={`category-icon-btn ${
                   selectedCategory === category.id ? "active" : ""
                 }`}
                 title={category.label}
               >
-                <span className="icon">{category.icon}</span>
+                <span className="icon">
+                  <img src={category.icon} alt={category.label} />
+                </span>
               </button>
             ))}
           </div>
 
-          {/* Option Cards for Hats */}
+          {/* Option Cards - displays current category options */}
           <div className="options-card-container">
-            {HatOptions.map((hat) => (
+            {getCurrentOptions().map((option) => (
               <div
-                key={hat.id}
-                onClick={() => setSelectedHat(
-                  selectedHat === hat.id ? null : hat.id
-                )}
+                key={option.id}
+                onClick={() => handleOptionClick(selectedCategory, option.id)}
                 className={`option-card ${
-                  selectedHat === hat.id ? "selected" : ""
+                  selectedItems[selectedCategory] === option.id ? "selected" : ""
                 }`}
               >
                 <img 
-                  src={hat.src} 
-                  alt={hat.label}
+                  src={option.src} 
+                  alt={option.label}
                   className="option-card-image"
                 />
               </div>
