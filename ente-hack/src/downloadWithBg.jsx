@@ -68,7 +68,8 @@ export const renderAvatarWithBackground = async (
   ducky_base,
   selectedItems,
   categoryOptions,
-  size = 512
+  standSrc = null,
+  size = 4096
 ) => {
   const canvas = document.createElement('canvas');
   canvas.width = size;
@@ -76,48 +77,45 @@ export const renderAvatarWithBackground = async (
   const ctx = canvas.getContext('2d');
 
   try {
-    // Draw the gradient background
     drawBackground(ctx, size, size);
 
-    // Load base image first to get its aspect ratio
+    // Duck: same fill logic as transparent download (aspect-ratio contain, full canvas)
     const baseImage = await loadImage(ducky_base);
-
-    // Calculate avatar size (85% of canvas area)
-    const maxSize = size * 0.85;
-
-    // Preserve aspect ratio (object-fit: contain behavior)
     const imgAspect = baseImage.naturalWidth / baseImage.naturalHeight;
 
-    let drawWidth, drawHeight;
-
+    let duckyW, duckyH, duckyX, duckyY;
     if (imgAspect > 1) {
-      // Image is wider than tall - fit to width
-      drawWidth = maxSize;
-      drawHeight = maxSize / imgAspect;
+      duckyW = size;
+      duckyH = size / imgAspect;
+      duckyX = 0;
+      duckyY = (size - duckyH) / 2;
     } else {
-      // Image is taller than wide - fit to height
-      drawHeight = maxSize;
-      drawWidth = maxSize * imgAspect;
+      duckyH = size;
+      duckyW = size * imgAspect;
+      duckyX = (size - duckyW) / 2;
+      duckyY = 0;
     }
 
-    // Center the avatar on the canvas
-    const offsetX = (size - drawWidth) / 2;
-    const offsetY = (size - drawHeight) / 2;
+    // Stand: drawn first so it's behind the ducky
+    if (standSrc) {
+      const standImg = await loadImage(standSrc);
+      const standW = size * 0.52 * 1.3 * 1.1;
+      const standH = standW * (179 / 388);
+      const standX = (size - standW) / 2;
+      const standTopY = size - standH + size * 0.1;
+      ctx.drawImage(standImg, standX, standTopY, standW, standH);
+    }
 
-    // Draw base avatar
-    ctx.drawImage(baseImage, offsetX, offsetY, drawWidth, drawHeight);
+    ctx.drawImage(baseImage, duckyX, duckyY, duckyW, duckyH);
 
-    // Layer order for overlays
     const categoriesToRender = ['cap', 'glasses', 'shoes', 'accessories'];
-
-    // Draw each selected overlay with same dimensions
     for (const category of categoriesToRender) {
       const selectedId = selectedItems[category];
       if (selectedId && categoryOptions[category]) {
         const option = categoryOptions[category].find(item => item.id === selectedId);
         if (option) {
           const overlayImage = await loadImage(option.src);
-          ctx.drawImage(overlayImage, offsetX, offsetY, drawWidth, drawHeight);
+          ctx.drawImage(overlayImage, duckyX, duckyY, duckyW, duckyH);
         }
       }
     }
@@ -141,13 +139,15 @@ export const downloadAvatarWithBackground = async (
   ducky_base,
   selectedItems,
   categoryOptions,
-  filename = 'ducky-drip-avatar-bg.png'
+  filename = 'ducky-drip-avatar-bg.png',
+  standSrc = null
 ) => {
   try {
     const dataUrl = await renderAvatarWithBackground(
       ducky_base,
       selectedItems,
-      categoryOptions
+      categoryOptions,
+      standSrc
     );
     
     if (dataUrl) {
