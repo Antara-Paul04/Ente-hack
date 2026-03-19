@@ -316,105 +316,63 @@ const App = () => {
 
   // Filter out 'random' from visible categories (it's the dice button)
   const displayCategories = categories.filter(cat => cat.id !== 'random');
+  const currentOptions = getCurrentOptions();
 
   return (
     <div className="app-container">
-      {/* Left Side */}
-      <div className="main-wrapper">
-        {/* Header */}
-        <div className="header">
-          <h1 className="title">
-            Ducky Drip<span className="reg">®</span>
-          </h1>
-          <p className="subtitle">
-            Crafted with
-            <img src={heartIcon} alt="heart" className="heart-icon" />
-            by{" "}
-            <a
-              href="https://ente.io/?utm_source=duckyDrip"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="ente-link"
-            >
-              ente
-            </a>
-          </p>
-        </div>
-
-        {/* Customization Panel */}
-        <div className="customization-panel">
-          {/* Category Icons */}
-          <div className="category-icons">
-            {displayCategories.map((category) => (
-              <button
-                key={category.id}
-                onClick={() => handleCategoryClick(category.id)}
-                className={`category-icon-btn ${
-                  selectedCategory === category.id ? "active" : ""
-                }`}
-                title={category.label}
+      <section className="preview-panel">
+        <div className="preview-shell">
+          <div className="header">
+            <h1 className="title">
+              Ducky Drip<span className="reg">®</span>
+            </h1>
+            <p className="subtitle">
+              Crafted with
+              <img src={heartIcon} alt="heart" className="heart-icon" />
+              by{" "}
+              <a
+                href="https://ente.io/?utm_source=duckyDrip"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="ente-link"
               >
-                <span className="icon">
-                  <img src={category.icon} alt={category.label} />
-                </span>
-              </button>
-            ))}
+                ente
+              </a>
+            </p>
           </div>
 
-          {/* Option Cards */}
-          <div className={`options-card-container category-${selectedCategory}`}>
-            {getCurrentOptions().map((option) => (
-              <div
-                key={option.id}
-                onClick={() => handleOptionClick(selectedCategory, option.id)}
-                className={`option-card ${
-                  selectedItems[selectedCategory] === option.id ? "selected" : ""
-                }`}
-              >
-                <img
-                  src={option.src}
-                  alt={option.label}
-                  className="option-card-image"
-                />
+          <div className="preview-wrapper">
+            <div className="preview-box">
+              <div className="avatar-preview-box">
+                {renderAvatar()}
               </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* Right Side - Preview */}
-      <div className="preview-panel">
-        <div className="preview-wrapper">
-          <div className="preview-box">
-            <div className="avatar-preview-box">
-              {renderAvatar()}
             </div>
           </div>
-          
-          {/* Action Buttons */}
+
           <div className="action-buttons">
-            <button className="action-btn" onClick={handleRandomize} title="Randomize">
+            <button className="action-btn action-btn-primary" onClick={handleRandomize} title="Randomize">
               <img src={randomIcon} alt="Randomize" className="action-icon" />
+              <span>Randomize</span>
             </button>
             <button className="action-btn" onClick={handleShare} title="Share">
               <img src={shareIcon} alt="Share" className="action-icon" />
+              <span>Share</span>
             </button>
-            
-            {/* Download Button with Dropdown */}
+
             <div className="download-btn-wrapper" ref={downloadMenuRef}>
-              <button 
-                className="action-btn" 
-                onClick={handleDownloadClick} 
+              <button
+                className="action-btn action-btn-strong"
+                onClick={handleDownloadClick}
                 title="Download"
                 disabled={isDownloading}
               >
                 <img src={downloadIcon} alt="Download" className="action-icon" />
+                <span>{isDownloading ? 'Preparing...' : 'Download'}</span>
               </button>
-              
-              {/* Download Dropdown Menu */}
+
               {showDownloadMenu && (
                 <div className="download-menu">
-                  <button 
+                  <button
                     className="download-menu-item"
                     onClick={handleDownloadTransparent}
                   >
@@ -424,7 +382,7 @@ const App = () => {
                       <span className="download-menu-subtitle">PNG with no background</span>
                     </span>
                   </button>
-                  <button 
+                  <button
                     className="download-menu-item"
                     onClick={handleDownloadWithBg}
                   >
@@ -439,7 +397,60 @@ const App = () => {
             </div>
           </div>
         </div>
-      </div>
+      </section>
+
+      <aside className="main-wrapper">
+        <div className="customization-panel">
+          <div className="panel-header">
+            <div>
+              <h2 className="panel-title">Dress up your ducky</h2>
+            </div>
+          </div>
+
+          <div className="category-section">
+            <div className="category-icons" role="tablist" aria-label="Customization categories">
+              {displayCategories.map((category) => (
+                <button
+                  key={category.id}
+                  onClick={() => handleCategoryClick(category.id)}
+                  className={`category-icon-btn ${
+                    selectedCategory === category.id ? "active" : ""
+                  }`}
+                  title={category.label}
+                  aria-pressed={selectedCategory === category.id}
+                >
+                  <span className="icon">
+                    <img src={category.icon} alt={category.label} />
+                  </span>
+                  <span className="category-label">{category.label}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="options-section">
+            <div className={`options-card-container category-${selectedCategory}`}>
+              {currentOptions.map((option) => (
+                <button
+                  key={option.id}
+                  onClick={() => handleOptionClick(selectedCategory, option.id)}
+                  className={`option-card ${
+                    selectedItems[selectedCategory] === option.id ? "selected" : ""
+                  }`}
+                  type="button"
+                  aria-pressed={selectedItems[selectedCategory] === option.id}
+                >
+                  <img
+                    src={option.src}
+                    alt={option.label}
+                    className="option-card-image"
+                  />
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      </aside>
       
       {/* Success Message */}
       {showSuccess && (
