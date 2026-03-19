@@ -1,0 +1,4 @@
+{
+  "buildCommand": "cd ente-hack && npm install && npx vite build",
+  "outputDirectory": "dist"
+}
