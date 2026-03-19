@@ -126,6 +126,7 @@ export const categoryOptions = {
     { id: '12', src: cap12, preview: capPrev12, label: 'Cap 12' },
     { id: '13', src: cap13, preview: capPrev13, label: 'Cap 13' },
     { id: '14', src: cap14, preview: capPrev14, label: 'Cap 14' },
+    { id: '15', src: shades10, preview: shadesPrev10, label: 'Cap 15' },
   ],
   glasses: [
     { id: '1', src: shades1, preview: shadesPrev1, label: 'Shades 1' },
@@ -137,7 +138,6 @@ export const categoryOptions = {
     { id: '7', src: shades7, preview: shadesPrev7, label: 'Shades 7' },
     { id: '8', src: shades8, preview: shadesPrev8, label: 'Shades 8' },
     { id: '9', src: shades9, preview: shadesPrev9, label: 'Shades 9' },
-    { id: '10', src: shades10, preview: shadesPrev10, label: 'Shades 10' },
     { id: '11', src: shades11, preview: shadesPrev11, label: 'Shades 11' },
     { id: '12', src: shades12, preview: shadesPrev12, label: 'Shades 12' }
   ],

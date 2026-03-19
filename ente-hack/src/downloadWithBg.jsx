@@ -97,13 +97,13 @@ export const renderAvatarWithBackground = async (
     }
 
     // Stand: drawn first so it's behind the ducky
+    // Uses same positioning math as the transparent download for consistency
     if (standSrc) {
       const standImg = await loadImage(standSrc);
-      const standW = size * 0.52 * 1.3 * 1.1;
-      const standH = standW * (179 / 388);
-      const standX = (size - standW) / 2;
-      const standTopY = size - standH + size * 0.1;
-      ctx.drawImage(standImg, standX, standTopY, standW, standH);
+      const standW = duckyW * 0.88;
+      const standX = duckyX + (duckyW - standW) / 2;
+      const standY = duckyY + duckyH * 0.72;
+      ctx.drawImage(standImg, standX, standY, standW, duckyH * 0.32);
     }
 
     ctx.drawImage(baseImage, duckyX, duckyY, duckyW, duckyH);
