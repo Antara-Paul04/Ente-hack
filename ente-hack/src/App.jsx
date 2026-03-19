@@ -301,6 +301,7 @@ const App = () => {
           }
         });
         setPreviewItems(next);
+        haptic(tick === ticks ? 20 : 5);
 
         if (tick === ticks) {
           setSelectedItems(finalItems);
