@@ -91,7 +91,18 @@ const App = () => {
     });
     const hash = params.toString();
     const newUrl = hash ? `#${hash}` : window.location.pathname;
+    const scrollX = window.scrollX;
+    const scrollY = window.scrollY;
+
     window.history.replaceState(null, '', newUrl);
+
+    // Mobile browsers can still jump when the URL hash changes after shuffle.
+    // Restore the prior viewport position on the next frame.
+    requestAnimationFrame(() => {
+      if (window.scrollX !== scrollX || window.scrollY !== scrollY) {
+        window.scrollTo(scrollX, scrollY);
+      }
+    });
   }, [selectedItems]);
 
   // Preload current category's preview images
