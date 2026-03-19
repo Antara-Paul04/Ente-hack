@@ -112,7 +112,8 @@ const App = () => {
   // Category order for swipe navigation (exclude 'random')
   const catOrder = categories.filter(c => c.id !== 'random').map(c => c.id);
 
-  // Scroll to selected item when switching categories
+  // Scroll to the selected item only when the user switches categories.
+  // Tying this to selectedItems causes a page jump on mobile after shuffle completes.
   useEffect(() => {
     if (!optionsGridRef.current) return;
     const selectedId = selectedItems[selectedCategory];
@@ -121,7 +122,7 @@ const App = () => {
     if (selectedEl) {
       setTimeout(() => selectedEl.scrollIntoView({ block: 'nearest', behavior: 'smooth' }), 50);
     }
-  }, [selectedCategory, selectedItems]);
+  }, [selectedCategory]);
 
   // Swipe to switch categories on mobile
   const handleSwipeStart = (e) => {
