@@ -1,0 +1,24 @@
+{
+  "name": "Ducky Drip",
+  "short_name": "Ducky Drip",
+  "description": "Create your ducky. Mix the drip. Download and share.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "theme_color": "#1E88E5",
+  "background_color": "#fdfefe",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/og-image.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
