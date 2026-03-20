@@ -35,25 +35,14 @@ const DOWNLOAD_SLANGS = [
   'Not me obsessed \u{1F62D}',
 ];
 
-// Parse URL hash into selected items
-const parseHashState = () => {
-  const items = { cap: null, glasses: null, accessories: null, shoes: null };
-  const hash = window.location.hash.slice(1);
-  if (!hash) return items;
-  const params = new URLSearchParams(hash);
-  for (const [key, val] of params) {
-    if (key in items && val) {
-      if (categoryOptions[key]?.some(o => o.id === val)) {
-        items[key] = val;
-      }
-    }
-  }
-  return items;
-};
-
 const App = () => {
   const [selectedCategory, setSelectedCategory] = useState('glasses');
-  const [selectedItems, setSelectedItems] = useState(parseHashState);
+  const [selectedItems, setSelectedItems] = useState({
+    cap: null,
+    glasses: null,
+    accessories: null,
+    shoes: null,
+  });
   const [isDownloading, setIsDownloading] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const [showDownloadMenu, setShowDownloadMenu] = useState(false);
@@ -83,27 +72,11 @@ const App = () => {
     canvasRef.current = canvas;
   }, []);
 
-  // Sync selected items to URL hash
+  // Keep the address bar clean during normal use.
   useEffect(() => {
-    const params = new URLSearchParams();
-    Object.entries(selectedItems).forEach(([key, val]) => {
-      if (val) params.set(key, val);
-    });
-    const hash = params.toString();
-    const newUrl = hash ? `#${hash}` : window.location.pathname;
-    const scrollX = window.scrollX;
-    const scrollY = window.scrollY;
-
-    window.history.replaceState(null, '', newUrl);
-
-    // Mobile browsers can still jump when the URL hash changes after shuffle.
-    // Restore the prior viewport position on the next frame.
-    requestAnimationFrame(() => {
-      if (window.scrollX !== scrollX || window.scrollY !== scrollY) {
-        window.scrollTo(scrollX, scrollY);
-      }
-    });
-  }, [selectedItems]);
+    if (!window.location.hash) return;
+    window.history.replaceState(null, '', window.location.pathname + window.location.search);
+  }, []);
 
   // Preload current category's preview images
   useEffect(() => {
